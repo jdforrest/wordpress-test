@@ -27,22 +27,24 @@ function custom_fields($fields) {
 			'" size="30" tabindex="1"' . $aria_req . ' /></p>';
 
 		$fields[ 'email' ] = '<p class="comment-form-email">'.
-			'<label for="email">' . __( 'Email' ) . '</label>'.
+			'<label for="email">' . __( 'E-mail' ) . '</label>'.
 			( $req ? '<span class="required">*</span>' : '' ).
 			'<input id="email" name="email" type="text" value="'. esc_attr( $commenter['comment_author_email'] ) .
 			'" size="30"  tabindex="2"' . $aria_req . ' /></p>';
-
+		
+		/* don't need these two fields
 		$fields[ 'url' ] = '<p class="comment-form-url">'.
 			'<label for="url">' . __( 'Website' ) . '</label>'.
 			'<input id="url" name="url" type="text" value="'. esc_attr( $commenter['comment_author_url'] ) .
 			'" size="30"  tabindex="3" /></p>';
 		
-		//Will leave this hear for now, even though we don't need their phone number, just going along with article
+		//Will leave this here for now, even though we don't need their phone number, just going along with article
 		$fields[ 'phone' ] = '<p class="comment-form-phone">'.
 			'<label for="phone">' . __( 'Phone' ) . '</label>'.
-			'<input id="phone" name="phone" type="text" size="30"  tabindex="4" /></p>';
-
-	return $fields;
+			'<input id="phone" name="phone" type="text" size="30"  tabindex="4" /></p>'; 
+		 */
+		 
+		return $fields;
 }
 
 
@@ -51,7 +53,7 @@ function custom_fields($fields) {
 add_action( 'comment_form_logged_in_after', 'additional_fields' ); //this only shows if they are logged in
 add_action( 'comment_form_after_fields', 'additional_fields' );
 
-function additional_fields () {
+function additional_fields() {
 	
 	//comment form title not currently required, should it be?
 	echo '<p class="comment-form-title">'.
@@ -80,9 +82,11 @@ function additional_fields () {
 add_action( 'comment_post', 'save_comment_meta_data' );
 function save_comment_meta_data( $comment_id ) {
 	
+	/*
 	if ( ( isset( $_POST['phone'] ) ) && ( $_POST['phone'] != '') )
 	$phone = wp_filter_nohtml_kses($_POST['phone']);
 	add_comment_meta( $comment_id, 'phone', $phone );
+	*/
 
 	if ( ( isset( $_POST['title'] ) ) && ( $_POST['title'] != '') )
 	$title = wp_filter_nohtml_kses($_POST['title']);
@@ -103,51 +107,8 @@ function verify_comment_meta_data( $commentdata ) {
 	return $commentdata;
 }
 
-//retrieves comment's meta data:
-get_comment_meta( $comment_id, $meta_key, $single = false );
 
-
-
-
-// =====--- ALL THE CODE ABOVE GOES IN functions.php WHEN WORKING IN THEME ---====
-
-// ====---  ALL THE CODE BELOW GOES IN COMMENTS TEMPLATE WHEN WORKING IN THEME  ---====
-
-
-
-
-// Add the comment meta (saved earlier) to the comment text
-// You can also output the comment meta values directly to the comments template  
-
-add_filter( 'comment_text', 'modify_comment');
-function modify_comment( $text ){
-
-	$plugin_url_path = WP_PLUGIN_URL; //required since we're using images saved in that folder
-									  //if we are going to put this into a theme, this will be the URL of the theme directory
-	
-	//if comment has a title, bolds the text and puts it in front of the main comment box
-	if( $commenttitle = get_comment_meta( get_comment_ID(), 'title', true ) ) {
-		$commenttitle = '<strong>' . esc_attr( $commenttitle ) . '</strong><br/>';
-		$text = $commenttitle . $text;
-	} 
-	
-	//if has a rating, adds to the end of the comment
-	if( $commentrating = get_comment_meta( get_comment_ID(), 'rating', true ) ) {
-		$commentrating = '<p class="comment-rating">	<img src="'. $plugin_url_path .
-		'/ExtendComment/images/'. $commentrating . 'star.gif"/><br/>Rating: <strong>'. $commentrating .' / 5</strong></p>';
-		$text = $text . $commentrating;
-		return $text;
-	} else {
-		return $text;
-	}
-}
-
-
-//tells WordPress to add the reference meta box to the comment editing page
-add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
-
-
-// Add an edit option to comment editing screen  
+// Add an edit option to comment editing screen (in the WP dashboard)
 // using wp_nonce_field for security
 
 add_action( 'add_meta_boxes_comment', 'extend_comment_add_meta_box' );
@@ -155,16 +116,18 @@ function extend_comment_add_meta_box() {
     add_meta_box( 'title', __( 'Comment Metadata - Extend Comment' ), 'extend_comment_meta_box', 'comment', 'normal', 'high' );
 }
 
-function extend_comment_meta_box ( $comment ) {
-    $phone = get_comment_meta( $comment->comment_ID, 'phone', true );
+function extend_comment_meta_box( $comment ) {
+    //$phone = get_comment_meta( $comment->comment_ID, 'phone', true );
     $title = get_comment_meta( $comment->comment_ID, 'title', true );
     $rating = get_comment_meta( $comment->comment_ID, 'rating', true );
     wp_nonce_field( 'extend_comment_update', 'extend_comment_update', false );
     ?>
+    <!--
     <p>
         <label for="phone"><?php _e( 'Phone' ); ?></label>
         <input type="text" name="phone" value="<?php echo esc_attr( $phone ); ?>" class="widefat" />
     </p>
+    -->
     <p>
         <label for="title"><?php _e( 'Comment Title' ); ?></label>
         <input type="text" name="title" value="<?php echo esc_attr( $title ); ?>" class="widefat" />
@@ -189,13 +152,15 @@ function extend_comment_meta_box ( $comment ) {
 add_action( 'edit_comment', 'extend_comment_edit_metafields' );
 function extend_comment_edit_metafields( $comment_id ) {
     if( ! isset( $_POST['extend_comment_update'] ) || ! wp_verify_nonce( $_POST['extend_comment_update'], 'extend_comment_update' ) ) return;
-
+	
+	/*
 	if ( ( isset( $_POST['phone'] ) ) && ( $_POST['phone'] != '') ) :
 	$phone = wp_filter_nohtml_kses($_POST['phone']);
 	update_comment_meta( $comment_id, 'phone', $phone );
 	else :
 	delete_comment_meta( $comment_id, 'phone');
 	endif;
+	*/
 
 	if ( ( isset( $_POST['title'] ) ) && ( $_POST['title'] != '') ):
 	$title = wp_filter_nohtml_kses($_POST['title']);
@@ -213,6 +178,50 @@ function extend_comment_edit_metafields( $comment_id ) {
 
 }
 
+//retrieves comment's meta data:
+//get_comment_meta( $comment_id, $meta_key, $single = false ); //THIS WAS TAKEN OUT OF FINAL
 
+
+
+// Add the comment meta (saved earlier) to the comment text
+// You can also output the comment meta values directly to the comments template  
+
+add_filter( 'comment_text', 'modify_comment');
+function modify_comment( $text ){
+
+	$plugin_url_path = WP_PLUGIN_URL; //required since we're using images saved in that folder
+									  //if we are going to put this into a theme, this will be the URL of the theme directory
+	
+	//if comment has a title, bolds the text and puts it in front of the main comment box
+	if( $commenttitle = get_comment_meta( get_comment_ID(), 'title', true ) ) {
+		$commenttitle = '<strong>' . esc_attr( $commenttitle ) . '</strong><br/>';
+		$text = $commenttitle . $text;
+	} 
+	
+	//if has a rating, adds to the end of the comment
+	// REMOVED: <br/>Rating: <strong>'. $commentrating .' / 5</strong>
+	if( $commentrating = get_comment_meta( get_comment_ID(), 'rating', true ) ) {
+		$commentrating = '<p class="comment-rating">	<img src="'. $plugin_url_path .
+		'/ExtendComment/images/'. $commentrating . 'star.gif"/></p>';
+		$text = $text . $commentrating;
+		return $text;
+	} else {
+		return $text;
+	}
+}
+
+
+//tells WordPress to add the reference meta box to the comment editing page
+//add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
+
+//wrapping add_meta_box in another function to load before everything else
+//add_action( 'admin_init', 'comment_meta_boxes', 1); //THIS WAS TAKEN OUT OF FINAL
+
+//add_meta_box needs to go into its own function
+/*
+function comment_meta_boxes(){
+	add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
+}
+*/ //THIS WAS TAKEN OUT OF FINAL
 
 ?>
