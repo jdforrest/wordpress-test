@@ -32,17 +32,14 @@ function custom_fields($fields) {
 			'<input id="email" name="email" type="text" value="'. esc_attr( $commenter['comment_author_email'] ) .
 			'" size="30"  tabindex="2"' . $aria_req . ' /></p>';
 		
-		/* don't need these two fields
-		$fields[ 'url' ] = '<p class="comment-form-url">'.
-			'<label for="url">' . __( 'Website' ) . '</label>'.
-			'<input id="url" name="url" type="text" value="'. esc_attr( $commenter['comment_author_url'] ) .
-			'" size="30"  tabindex="3" /></p>';
+		// have to set this to blank since it is a default
+		$fields[ 'url' ] = '';
 		
-		//Will leave this here for now, even though we don't need their phone number, just going along with article
+		/* Will leave this here for now, even though we don't need their phone number, just going along with article
 		$fields[ 'phone' ] = '<p class="comment-form-phone">'.
 			'<label for="phone">' . __( 'Phone' ) . '</label>'.
 			'<input id="phone" name="phone" type="text" size="30"  tabindex="4" /></p>'; 
-		 */
+		*/ 
 		 
 		return $fields;
 }
@@ -57,7 +54,7 @@ function additional_fields() {
 	
 	//comment form title not currently required, should it be?
 	echo '<p class="comment-form-title">'.
-	'<label for="title">' . __( 'Comment Title' ) . '</label>'.
+	'<label for="title">' . __( 'Title' ) . '</label>'.
 	'<input id="title" name="title" type="text" size="30"  tabindex="5" /></p>';
 	
 	//note that the rating field is required

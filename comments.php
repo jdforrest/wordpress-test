@@ -57,60 +57,23 @@ _deprecated_file( sprintf( __( 'Theme without %1$s' ), basename(__FILE__) ), '3.
 
 <?php if ( comments_open() ) : ?>
 
-<div id="respond">
-	
-	<h3><?php comment_form_title( __('Post a Review') ); ?></h3>
-	
-	<div id="cancel-comment-reply">
-		<small><?php cancel_comment_reply_link() ?></small>
-	</div>
-	
-	<?php if ( get_option('comment_registration') && !is_user_logged_in() ) : ?>
-	<p><?php printf(__('You must be <a href="%s">logged in</a> to post a comment.'), wp_login_url( get_permalink() )); ?></p>
-	<?php else : ?>
-	
-	<form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post" id="commentform">
-	
-	<!--<p><small><?php printf(__('<strong>XHTML:</strong> You can use these tags: <code>%s</code>'), allowed_tags()); ?></small></p>-->
-	
-	<!-- Removing for now, trying plugin option 
-	<p>Rate this CRO:
-		<input type="radio" name="rating" value="one-star">One Star
-		<input type="radio" name="rating" value="two-stars">Two Stars
-		<input type="radio" name="rating" value="three-stars">Three Stars
-		<input type="radio" name="rating" value="four-stars">Four Stars
-		<input type="radio" name="rating" value="five-stars">Five Stars
-	</p>
-	-->
-	<p>		
-		<textarea name="comment" id="comment" cols="58" rows="10" tabindex="4"></textarea>
-	</p>
-	
-	<?php if ( is_user_logged_in() ) : ?>
-	
-		<p><small><?php printf(__('Logged in as <a href="%1$s">%2$s</a>.'), get_edit_user_link(), $user_identity); ?> <a href="<?php echo wp_logout_url(get_permalink()); ?>" title="<?php esc_attr_e('Log out of this account'); ?>"><?php _e('Log out &raquo;'); ?></a></small></p>
-	
-	<?php else : ?>
-	
-		<p><input type="text" name="author" id="author" value="<?php echo esc_attr($comment_author); ?>" size="22" tabindex="1" <?php if ($req) echo "aria-required='true'"; ?> />
-		<label for="author"><small><?php _e('Name'); ?> <?php if ($req) _e('(required)'); ?></small></label></p>
-		
-		<p><input type="text" name="email" id="email" value="<?php echo esc_attr($comment_author_email); ?>" size="22" tabindex="2" <?php if ($req) echo "aria-required='true'"; ?> />
-		<label for="email"><small><?php _e('Mail (will not be published)'); ?> <?php if ($req) _e('(required)'); ?></small></label></p>
-		
-		<p><input type="text" name="url" id="url" value="<?php echo  esc_attr($comment_author_url); ?>" size="22" tabindex="3" />
-		<label for="url"><small><?php _e('Website'); ?></small></label></p>
-	
-	<?php endif; ?>
-	
-	<p><input name="submit" type="submit" id="comment-submit" tabindex="5" value="<?php esc_attr_e('Submit'); ?>" />
-	<?php comment_id_fields(); ?>
-	</p>
-	<?php do_action('comment_form', $post->ID); ?>
-	
-	</form>
-	
-	<?php endif; // If registration required and not logged in ?>
+<div id="respond">	
+
+<?php 	
+	//Customizing comment_form();
+	$comments_args = array(
+        // change the title of send button 
+        'label_submit'=>'Submit Review',
+        // change the title of the reply section
+        'title_reply'=>'Write a Review',
+        // removes comment after text area: "You may use these HTML tags..."
+        'comment_notes_after' => '',
+        // redefine your own textarea (the comment body)
+        'comment_field' => '<p class="comment-form-comment"><label for="comment">' . _x( 'Review', 'noun' ) . '</label><br /><textarea id="comment" name="comment" aria-required="true"></textarea></p>',
+	);
+	comment_form($comments_args);
+?>
+
 </div>
 
 <?php endif; // if you delete this the sky will fall on your head ?>

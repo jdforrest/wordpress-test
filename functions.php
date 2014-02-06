@@ -29,4 +29,20 @@
 	);
 	
 	register_sidebar($rightsidebar);
+	
+	//Customizes comment_form()
+	/*
+	add_filter('comment_form_default_fields','modify_comment_fields');
+    function modify_comment_fields($fields){
+
+    $fields =  array(
+    	'author' =>'<div><p class="comment-form-author"><label for="author">Author</label><input id="author" name="author" type="text"/></p></div>');
+
+    return $fields;
+    }	
+	*/
+	
+
+	
+	
 ?>
