@@ -34,12 +34,6 @@ function custom_fields($fields) {
 		
 		// have to set this to blank since it is a default
 		$fields[ 'url' ] = '';
-		
-		/* Will leave this here for now, even though we don't need their phone number, just going along with article
-		$fields[ 'phone' ] = '<p class="comment-form-phone">'.
-			'<label for="phone">' . __( 'Phone' ) . '</label>'.
-			'<input id="phone" name="phone" type="text" size="30"  tabindex="4" /></p>'; 
-		*/ 
 		 
 		return $fields;
 }
@@ -62,10 +56,10 @@ function additional_fields() {
 	'<label for="rating">'. __('Rating') . '<span class="required">*</span></label>
 	<span class="commentratingbox">';
 
-		//Current rating scale is 1 to 5. If you want the scale to be 1 to 10, then set the value of $i to 10.
-		//dont need to use this loop, can instead write our own HTML, though we should still be able to get the star images to load
-		for( $i=1; $i <= 5; $i++ )
-		echo '<span class="commentrating"><input type="radio" name="rating" id="rating" value="'. $i .'"/>'. $i .'</span>';
+	//Current rating scale is 1 to 5. If you want the scale to be 1 to 10, then set the value of $i to 10.
+	//dont need to use this loop, can instead write our own HTML, though we should still be able to get the star images to load
+	for( $i=1; $i <= 5; $i++ )
+	echo '<span class="commentrating"><input type="radio" name="rating" id="rating" value="'. $i .'"/>'. $i .'</span>';
 
 	echo'</span></p>';
 
@@ -78,12 +72,6 @@ function additional_fields() {
 
 add_action( 'comment_post', 'save_comment_meta_data' );
 function save_comment_meta_data( $comment_id ) {
-	
-	/*
-	if ( ( isset( $_POST['phone'] ) ) && ( $_POST['phone'] != '') )
-	$phone = wp_filter_nohtml_kses($_POST['phone']);
-	add_comment_meta( $comment_id, 'phone', $phone );
-	*/
 
 	if ( ( isset( $_POST['title'] ) ) && ( $_POST['title'] != '') )
 	$title = wp_filter_nohtml_kses($_POST['title']);
@@ -114,17 +102,10 @@ function extend_comment_add_meta_box() {
 }
 
 function extend_comment_meta_box( $comment ) {
-    //$phone = get_comment_meta( $comment->comment_ID, 'phone', true );
     $title = get_comment_meta( $comment->comment_ID, 'title', true );
     $rating = get_comment_meta( $comment->comment_ID, 'rating', true );
     wp_nonce_field( 'extend_comment_update', 'extend_comment_update', false );
     ?>
-    <!--
-    <p>
-        <label for="phone"><?php _e( 'Phone' ); ?></label>
-        <input type="text" name="phone" value="<?php echo esc_attr( $phone ); ?>" class="widefat" />
-    </p>
-    -->
     <p>
         <label for="title"><?php _e( 'Comment Title' ); ?></label>
         <input type="text" name="title" value="<?php echo esc_attr( $title ); ?>" class="widefat" />
@@ -149,15 +130,6 @@ function extend_comment_meta_box( $comment ) {
 add_action( 'edit_comment', 'extend_comment_edit_metafields' );
 function extend_comment_edit_metafields( $comment_id ) {
     if( ! isset( $_POST['extend_comment_update'] ) || ! wp_verify_nonce( $_POST['extend_comment_update'], 'extend_comment_update' ) ) return;
-	
-	/*
-	if ( ( isset( $_POST['phone'] ) ) && ( $_POST['phone'] != '') ) :
-	$phone = wp_filter_nohtml_kses($_POST['phone']);
-	update_comment_meta( $comment_id, 'phone', $phone );
-	else :
-	delete_comment_meta( $comment_id, 'phone');
-	endif;
-	*/
 
 	if ( ( isset( $_POST['title'] ) ) && ( $_POST['title'] != '') ):
 	$title = wp_filter_nohtml_kses($_POST['title']);
@@ -174,11 +146,6 @@ function extend_comment_edit_metafields( $comment_id ) {
 	endif;
 
 }
-
-//retrieves comment's meta data:
-//get_comment_meta( $comment_id, $meta_key, $single = false ); //THIS WAS TAKEN OUT OF FINAL
-
-
 
 // Add the comment meta (saved earlier) to the comment text
 // You can also output the comment meta values directly to the comments template  
@@ -206,19 +173,5 @@ function modify_comment( $text ){
 		return $text;
 	}
 }
-
-
-//tells WordPress to add the reference meta box to the comment editing page
-//add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
-
-//wrapping add_meta_box in another function to load before everything else
-//add_action( 'admin_init', 'comment_meta_boxes', 1); //THIS WAS TAKEN OUT OF FINAL
-
-//add_meta_box needs to go into its own function
-/*
-function comment_meta_boxes(){
-	add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
-}
-*/ //THIS WAS TAKEN OUT OF FINAL
 
 ?>
