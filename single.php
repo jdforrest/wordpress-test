@@ -1,10 +1,14 @@
 <?php get_header(); ?>
 	<div id="middle" class="clear"> <!-- middle div ends in footer -->
 		<div id="content">
+			<h1>
+				<?php echo average_rating(); ?>				
+			</h1>
 			<?php if(have_posts()): while(have_posts()): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class("single-post left"); ?>>	
 						<?php the_post_thumbnail(); //this inserts the featured image ?>
 						<h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+						
 						<a href="<?php comments_link(); ?>">
 							<?php comments_number("0 user reviews", "1 user review", "% user reviews"); ?>
 						</a>							
@@ -17,5 +21,5 @@
 					</article>			
 			<?php endwhile; else: ?>
 				<p>WRITE MOAR POSTS!!!!!1</p>
-			<?php endif; ?>			
+			<?php endif; ?>	
 <?php get_footer(); ?>

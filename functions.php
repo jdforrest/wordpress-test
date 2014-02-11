@@ -30,19 +30,35 @@
 	
 	register_sidebar($rightsidebar);
 	
-	//Customizes comment_form()
-	/*
-	add_filter('comment_form_default_fields','modify_comment_fields');
-    function modify_comment_fields($fields){
-
-    $fields =  array(
-    	'author' =>'<div><p class="comment-form-author"><label for="author">Author</label><input id="author" name="author" type="text"/></p></div>');
-
-    return $fields;
-    }	
-	*/
 	
-
+	//function to get calculate the average ratings from the comments of a post from the data in the DB
+	//wordpress-test DB is "jdforrest_net_1"
+	function average_rating() {
+	    global $wpdb;
+	    $post_id = get_the_ID();
+	    $ratings = $wpdb->get_results("
 	
+	        SELECT $wpdb->commentmeta.meta_value
+	        FROM $wpdb->commentmeta
+	        INNER JOIN $wpdb->comments on $wpdb->comments.comment_id=$wpdb->commentmeta.comment_id
+	        WHERE $wpdb->commentmeta.meta_key='rating' 
+	        AND $wpdb->comments.comment_post_id=$post_id 
+	        AND $wpdb->comments.comment_approved =1
+	
+	        ");
+	    $counter = 0;
+	    $average_rating = 0;    
+	    if ($ratings) {
+	        foreach ($ratings as $rating) {
+	            $average_rating = $average_rating + $rating->meta_value;
+	            $counter++;
+	        } 
+	        //round the average to the nearast 1/2 point
+	        return (round(($average_rating/$counter)*2,0)/2);  
+	    } else {
+	        //no ratings
+	        return 'no rating';
+	    }
+	}
 	
 ?>
